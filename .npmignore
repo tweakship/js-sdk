@@ -1,0 +1,10 @@
+.DS_Store
+.vscode
+.github
+.build
+src
+tests
+tsconfig.json
+tsconfig.watch.json
+coverage
+jest.config.js
