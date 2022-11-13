@@ -1,7 +1,7 @@
 # Tweakship JavaScript SDK
 
 [![NPM version](https://badge.fury.io/js/tweakship.svg)](https://badge.fury.io/js/tweakship)
-[![Build status](https://github.com/tweakship/js-sdk/actions/workflows/build-status.yml/badge.svg?branch=master)](https://github.com/tweakship/js-sdk/actions/workflows/build-status.yml)
+[![Build status](https://github.com/tweakship/js-sdk/actions/workflows/build-status.yml/badge.svg?branch=main)](https://github.com/tweakship/js-sdk/actions/workflows/build-status.yml)
 
 JavaScript SDK for [Tweakship](https://tweakship.com) (Remote Configuration Service). Alter apps behavior without redeployment.
 
