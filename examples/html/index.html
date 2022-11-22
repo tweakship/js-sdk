@@ -5,14 +5,15 @@
         <title>Tweakship HTML Example</title>
         <script src="https://cdn.jsdelivr.net/npm/tweakship/dist/bundles/tweakship.min.js"></script>
         <script>
+            tweakship.Client.configure({
+                host: 'http://localhost:3100/local',
+                projectId: '40e259a3-990e-45e5-abb6-65a08d5be1c2',
+            });
+
             function refresh() {
-                tweakship.Client
-                    .configure({
-                        host: 'http://localhost:3100/local',
-                        projectId: '40e259a3-990e-45e5-abb6-65a08d5be1c2',
-                    })
-                    .getRemoteConfigAsync('discount', '3%')
-                    .then((remoteConfig) => (document.getElementById('discount').innerText = remoteConfig.value));
+                tweakship.Client.getRemoteConfigAsync('discount', '3%').then(
+                    (remoteConfig) => (document.getElementById('discount').innerText = remoteConfig.value)
+                );
             }
         </script>
     </head>
