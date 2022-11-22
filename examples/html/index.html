@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Tweakship HTML Example</title>
+        <script src="https://cdn.jsdelivr.net/npm/tweakship/dist/bundles/tweakship.min.js"></script>
+        <script>
+            function refresh() {
+                tweakship.Client
+                    .configure({
+                        host: 'http://localhost:3100/local',
+                        projectId: '40e259a3-990e-45e5-abb6-65a08d5be1c2',
+                    })
+                    .getRemoteConfigAsync('discount', '3%')
+                    .then((remoteConfig) => (document.getElementById('discount').innerText = remoteConfig.value));
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Sale discount</h1>
+        <div id="discount">3%</div>
+        <br />
+        <div>
+            <input type="submit" onclick="refresh()" value="Refresh from remote config" />
+        </div>
+    </body>
+</html>
