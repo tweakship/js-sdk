@@ -139,31 +139,33 @@ export class ClientImplementation {
                     }
                 )
                     .onSuccess((response) => {
-                        const responseValues = toMap(
-                            response.data.results.map<GetRemoteConfigResultType<T>>((t) => ({
-                                name: t.name,
-                                loadedFrom: 'server',
-                                value: parseValue<T>(t.value, t.valueType),
-                            })),
-                            (t) => t.name
-                        );
+                        const responseResultsMap = toMap(response.data.results, (t) => t.name);
 
-                        const results = remoteConfigs.map<GetRemoteConfigResultType<T>>(
-                            (remoteConfig) =>
-                                responseValues.get(remoteConfig.name) ?? {
+                        const results = remoteConfigs.map<GetRemoteConfigResultType<T>>((remoteConfig) => {
+                            const loadedConfig = responseResultsMap.get(remoteConfig.name);
+
+                            if (!loadedConfig || loadedConfig.status !== 'success') {
+                                return {
                                     ...this.getFromDefaultOrCache({
                                         name: remoteConfig.name,
                                         default: remoteConfig.default,
                                     }),
-                                    error: new RemoteConfigClientError('Failed to load configuration data from Server'),
-                                }
-                        );
+                                    error: loadedConfig?.error || 'ConfigNotFound',
+                                };
+                            }
+
+                            return {
+                                name: remoteConfig.name,
+                                value: parseValue<T>(loadedConfig.value, loadedConfig.valueType),
+                                loadedFrom: 'server',
+                            };
+                        });
 
                         results.forEach((result) => this._cache.set(result.name, result.value));
 
                         return results;
                     })
-                    .onFailureCompensateWithError((error) =>
+                    .onFailureCompensate((error) =>
                         Result.Ok<GetRemoteConfigResultType<T>[]>(
                             remoteConfigs.map((t) => ({ error, ...this.getFromDefaultOrCache(t) }))
                         )

@@ -50,7 +50,9 @@ describe('Client Feature Toggle tests', () => {
             jest
                 .fn()
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r1', value: 'true', valueType: RemoteConfigValueTypeNames.boolean }])
+                    createResponse([
+                        { name: 'r1', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                    ])
                 )
         );
 
@@ -76,7 +78,7 @@ describe('Client Feature Toggle tests', () => {
                     name: 'r1',
                     value: false,
                     loadedFrom: 'default',
-                    error: expect.any(Error),
+                    error: 'ConfigNotFound',
                 })
             );
     });
@@ -86,7 +88,9 @@ describe('Client Feature Toggle tests', () => {
             jest
                 .fn()
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r1', value: 'true', valueType: RemoteConfigValueTypeNames.boolean }])
+                    createResponse([
+                        { name: 'r1', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                    ])
                 )
         )
             .configure(ClientConfig)
@@ -105,7 +109,9 @@ describe('Client Feature Toggle tests', () => {
             jest
                 .fn()
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r1', value: 'true', valueType: RemoteConfigValueTypeNames.boolean }])
+                    createResponse([
+                        { name: 'r1', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                    ])
                 )
                 .mockReturnValueOnce(createResponse([]))
         );
@@ -119,7 +125,7 @@ describe('Client Feature Toggle tests', () => {
                     name: 'r1',
                     value: true,
                     loadedFrom: 'memoryCache',
-                    error: expect.any(Error),
+                    error: 'ConfigNotFound',
                 })
             );
     });
@@ -130,12 +136,14 @@ describe('Client Feature Toggle tests', () => {
                 .fn()
                 .mockReturnValueOnce(
                     createResponse([
-                        { name: 'r1', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
-                        { name: 'r2', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                        { name: 'r1', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                        { name: 'r2', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
                     ])
                 )
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r3', value: 'true', valueType: RemoteConfigValueTypeNames.boolean }])
+                    createResponse([
+                        { name: 'r3', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                    ])
                 )
         );
 
@@ -158,13 +166,13 @@ describe('Client Feature Toggle tests', () => {
                         name: 'r1',
                         value: true,
                         loadedFrom: 'memoryCache',
-                        error: expect.any(Error),
+                        error: 'ConfigNotFound',
                     },
                     {
                         name: 'r2',
                         value: true,
                         loadedFrom: 'memoryCache',
-                        error: expect.any(Error),
+                        error: 'ConfigNotFound',
                     },
                     {
                         name: 'r3',

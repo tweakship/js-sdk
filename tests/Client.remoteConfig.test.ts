@@ -74,7 +74,9 @@ describe('Client Remote Config tests', () => {
             jest
                 .fn()
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r1', value: 'server', valueType: RemoteConfigValueTypeNames.text }])
+                    createResponse([
+                        { name: 'r1', status: 'success', value: 'server', valueType: RemoteConfigValueTypeNames.text },
+                    ])
                 )
         );
 
@@ -100,12 +102,12 @@ describe('Client Remote Config tests', () => {
                     name: 'r1',
                     value: 'client',
                     loadedFrom: 'default',
-                    error: expect.any(Error),
+                    error: 'ConfigNotFound',
                 })
             );
     });
 
-    test('uses default Remote Config value, if failed to load', async () => {
+    test('uses default Remote Config value, if failed to load all configs', async () => {
         return new ClientImplementation(jest.fn().mockReturnValueOnce(Result.Fail('Failed to load')))
             .configure(ClientConfig)
             .getRemoteConfigAsync('r1', 'client')
@@ -114,8 +116,39 @@ describe('Client Remote Config tests', () => {
                     name: 'r1',
                     value: 'client',
                     loadedFrom: 'default',
-                    error: expect.any(Error),
+                    error: 'Failed to load',
                 })
+            );
+    });
+
+    test('uses default Remote Config value, if failed to load some configs', async () => {
+        return new ClientImplementation(
+            jest.fn().mockReturnValueOnce(
+                createResponse([
+                    { name: 'r1', status: 'success', value: 'server', valueType: RemoteConfigValueTypeNames.text },
+                    { name: 'r2', status: 'fail', error: 'ServerError' },
+                ])
+            )
+        )
+            .configure(ClientConfig)
+            .getMultipleRemoteConfigsAsync([
+                { name: 'r1', default: 'client' },
+                { name: 'r2', default: 1 },
+            ])
+            .then((result) =>
+                expect(result).toEqual<GetRemoteConfigResultType<unknown>[]>([
+                    {
+                        name: 'r1',
+                        value: 'server',
+                        loadedFrom: 'server',
+                    },
+                    {
+                        name: 'r2',
+                        value: 1,
+                        loadedFrom: 'default',
+                        error: 'ServerError',
+                    },
+                ])
             );
     });
 
@@ -124,7 +157,9 @@ describe('Client Remote Config tests', () => {
             jest
                 .fn()
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r1', value: 'server', valueType: RemoteConfigValueTypeNames.text }])
+                    createResponse([
+                        { name: 'r1', status: 'success', value: 'server', valueType: RemoteConfigValueTypeNames.text },
+                    ])
                 )
         )
             .configure(ClientConfig)
@@ -143,7 +178,9 @@ describe('Client Remote Config tests', () => {
             jest
                 .fn()
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r1', value: 'server', valueType: RemoteConfigValueTypeNames.text }])
+                    createResponse([
+                        { name: 'r1', status: 'success', value: 'server', valueType: RemoteConfigValueTypeNames.text },
+                    ])
                 )
                 .mockReturnValueOnce(createResponse([]))
         );
@@ -157,7 +194,7 @@ describe('Client Remote Config tests', () => {
                     name: 'r1',
                     value: 'server',
                     loadedFrom: 'memoryCache',
-                    error: expect.any(Error),
+                    error: 'ConfigNotFound',
                 })
             );
     });
@@ -168,12 +205,14 @@ describe('Client Remote Config tests', () => {
                 .fn()
                 .mockReturnValueOnce(
                     createResponse([
-                        { name: 'r1', value: 'server', valueType: RemoteConfigValueTypeNames.text },
-                        { name: 'r2', value: '2', valueType: RemoteConfigValueTypeNames.number },
+                        { name: 'r1', status: 'success', value: 'server', valueType: RemoteConfigValueTypeNames.text },
+                        { name: 'r2', status: 'success', value: '2', valueType: RemoteConfigValueTypeNames.number },
                     ])
                 )
                 .mockReturnValueOnce(
-                    createResponse([{ name: 'r3', value: 'true', valueType: RemoteConfigValueTypeNames.boolean }])
+                    createResponse([
+                        { name: 'r3', status: 'success', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
+                    ])
                 )
         );
 
@@ -196,13 +235,13 @@ describe('Client Remote Config tests', () => {
                         name: 'r1',
                         value: 'server',
                         loadedFrom: 'memoryCache',
-                        error: expect.any(Error),
+                        error: 'ConfigNotFound',
                     },
                     {
                         name: 'r2',
                         value: 2,
                         loadedFrom: 'memoryCache',
-                        error: expect.any(Error),
+                        error: 'ConfigNotFound',
                     },
                     {
                         name: 'r3',
@@ -217,17 +256,33 @@ describe('Client Remote Config tests', () => {
         const client = new ClientImplementation(
             jest.fn().mockReturnValueOnce(
                 createResponse([
-                    { name: 'number', value: '1', valueType: RemoteConfigValueTypeNames.number },
-                    { name: 'text', value: 'textValue', valueType: RemoteConfigValueTypeNames.text },
-                    { name: 'date', value: '2020-01-01T00:00:00+10:00', valueType: RemoteConfigValueTypeNames.date },
+                    { name: 'number', status: 'success', value: '1', valueType: RemoteConfigValueTypeNames.number },
+                    { name: 'text', status: 'success', value: 'textValue', valueType: RemoteConfigValueTypeNames.text },
+                    {
+                        name: 'date',
+                        status: 'success',
+                        value: '2020-01-01T00:00:00+10:00',
+                        valueType: RemoteConfigValueTypeNames.date,
+                    },
                     {
                         name: 'dateTime',
+                        status: 'success',
                         value: '2020-01-01T10:20:30+10:00',
                         valueType: RemoteConfigValueTypeNames.dateTime,
                     },
-                    { name: 'json', value: '{"prop":10}', valueType: RemoteConfigValueTypeNames.json },
-                    { name: 'boolean', value: 'true', valueType: RemoteConfigValueTypeNames.boolean },
-                    { name: 'unknown', value: 'unknownValue', valueType: 'unknown' as any },
+                    {
+                        name: 'json',
+                        status: 'success',
+                        value: '{"prop":10}',
+                        valueType: RemoteConfigValueTypeNames.json,
+                    },
+                    {
+                        name: 'boolean',
+                        status: 'success',
+                        value: 'true',
+                        valueType: RemoteConfigValueTypeNames.boolean,
+                    },
+                    { name: 'unknown', status: 'success', value: 'unknownValue', valueType: 'unknown' as any },
                 ])
             )
         );

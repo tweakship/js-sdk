@@ -1,4 +1,5 @@
 export * from './ClientConfigurationType';
+export * from './EvaluateRemoteConfigErrorType';
 export * from './EvaluateRemoteConfigResponseType';
 export * from './EvaluationContextType';
 export * from './GetRemoteConfigInfoType';
@@ -7,3 +8,4 @@ export * from './GetRemoteConfigResultType';
 export * from './HttpRequestExecutorType';
 export * from './RemoteConfigClientError';
 export * from './RemoteConfigValueTypeNames';
+export * from './SearchPredicateType';
