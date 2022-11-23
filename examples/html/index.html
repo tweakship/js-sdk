@@ -3,15 +3,15 @@
     <head>
         <meta charset="utf-8" />
         <title>Tweakship HTML Example</title>
-        <script src="https://cdn.jsdelivr.net/npm/tweakship/dist/bundles/tweakship.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tweakship@1.0.4/dist/bundles/tweakship.min.js"></script>
         <script>
-            tweakship.Client.configure({
+            tweakship.configure({
                 host: 'https://tweakship.com/',
-                projectId: '40e259a3-990e-45e5-abb6-65a08d5be1c2',
+                projectId: '839aef71-8418-4d6d-b494-3d871fefcf69',
             });
 
             function refresh() {
-                tweakship.Client.getRemoteConfigAsync('discount', '3%').then(
+                tweakship.getRemoteConfigAsync('discount', '3%').then(
                     (remoteConfig) => (document.getElementById('discount').innerText = remoteConfig.value)
                 );
             }

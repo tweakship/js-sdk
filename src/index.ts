@@ -5,8 +5,6 @@ export * from './contracts';
 export * from './extensions';
 export * from './functions';
 
-const tweakship = {
-    Client,
-};
+const tweakship = Client;
 
 export default tweakship;
