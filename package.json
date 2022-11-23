@@ -1,6 +1,6 @@
 {
     "name": "tweakship",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "JavaScript SDK for Tweakship (Remote Configuration Service). Alter apps behavior without redeployment.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
