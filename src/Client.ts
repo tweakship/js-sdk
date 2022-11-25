@@ -22,7 +22,9 @@ export class ClientImplementation {
     }
 
     /**
-     * Configures Client to connect to the Server
+     * Allows you to set the context for current user.
+     * This context will be used by Tweakship backend to provide config variations by evaluating rules you have configured in Tweakship Console.
+     * You can specify any attribute you want in the context.
      * @param config Server configuration
      * @returns Reference to the same Client instance
      */
@@ -68,9 +70,9 @@ export class ClientImplementation {
      * Synchronous call to get Feature Toggle value WITHOUT loading the latest value from the server.
      * The value is taken from memory cache or default if cache is empty.
      * Useful, when you preload all configs at app start and then use their values untill the app is restarted.
-     * @param name The name of Remote Config to provide
+     * @param name The name of Feature toggle to provide
      * @param defaultValue Default value to use, when memory cache is empty
-     * @returns Information about Remote Config, including its value, name, source of the value, and error if any occured
+     * @returns Information about Feature toggle, including its value, name, source of the value, and error if any occured
      */
     public getFeatureToggle(name: string, defaultValue: boolean): GetRemoteConfigResultType<boolean> {
         return {
@@ -92,7 +94,7 @@ export class ClientImplementation {
 
     /**
      * Loads Feature Toggle from the Server. If loading fails, returns the value from memory cache or default value, and error information.
-     * @param name The name of Remote Config
+     * @param name The name of Feature toggle
      * @param defaultValue Default value to use, when both Server and memory cache don't have the value
      * @returns Information about Feature Toggle, including its value, name, source of the value, and error if any occured
      */
@@ -103,7 +105,7 @@ export class ClientImplementation {
     /**
      * Loads multiple Remote Configs from Server. If loading fails, for each Remote Config returns the value from memory cache or default value, and error information.
      * @param configs Remote Configs to load with default value information
-     * @returns Information about Remote Config, including its value, name, source of the value, and error if any occured
+     * @returns Information about each requested Remote Config, including its value, name, source of the value, and error if any occured
      */
     public getMultipleRemoteConfigsAsync(
         configs: GetRemoteConfigInfoType<unknown>[]
@@ -114,7 +116,7 @@ export class ClientImplementation {
     /**
      * Loads multiple Feature Toggles from Server. If loading fails, for each Feature Toggle returns the value from memory cache or default value, and error information.
      * @param featureToggles Feature Toggles to load with default value information
-     * @returns Information about Feature Toggle, including its value, name, source of the value, and error if any occured
+     * @returns Information about each requested Feature Toggle, including its value, name, source of the value, and error if any occured
      */
     public getMultipleFeatureTogglesAsync(
         featureToggles: GetRemoteConfigInfoType<boolean>[]
